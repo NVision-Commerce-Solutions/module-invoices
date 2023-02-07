@@ -1,0 +1,41 @@
+"Invoice #", "Factuurnr."
+"Date", "Datum"
+"From Order #", "Ordernr."
+"Bill To", "Gefactureerd aan"
+"Invoice Total", "Totaal"
+"Open Amount", "Openstaand"
+
+"Unpaid", "Openstaande betaling"
+"remaining", "resterend"
+
+"View Invoice", "Factuur bekijken"
+
+"No invoices found.", "Er zijn geen facturen gevonden."
+
+"Page:", "Pagina:"
+"of", "van de"
+
+"Previous", "Vorige"
+"Next", "Volgende"
+
+"Invoice #", "Factuurnr."
+"Invoice Date:", "Factuur Datum:"
+"Download PDF", "Download PDF"
+
+"Items Invoiced", "Gefactureerde producten"
+"Product Name", "Product naam"
+"SKU", "Artikelnr."
+"Price", "Prijs"
+"Qty", "Aantal"
+"Subtotal", "Subtotaal"
+
+"VAT", "BTW"
+"Grand Total", "Totaal"
+
+"Back to My Invoices", "Terug naar mijn facturen"
+
+"Invoice Information", "Factuurinformatie"
+"Shipping Address", "Verzendadres"
+"Shipping Method", "Verzendmethode"
+"Billing Address", "Factuuradres"
+"Payment Method", "Betaalmethode"

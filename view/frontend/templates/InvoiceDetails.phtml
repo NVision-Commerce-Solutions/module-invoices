@@ -1,0 +1,335 @@
+<?php
+/** @var \Commerce365\Invoices\Block\InvoiceDetails  $block */
+$invoice = $block->getInvoice();
+$invoiceLines = $invoice["Lines"];
+$status = 'Paid';
+if ((float)$invoice["Remaining Amount"] > 0) {
+    $status = __('Unpaid') . ' (' . __('remaining') . ': &euro; ' . number_format((float)$invoice["Remaining Amount"], 2, ',', '.') . ')';
+}
+
+?>
+
+<div class="page-title-wrapper">
+    <h1 class="page-title">
+        <span class="base" data-ui-id="page-title-wrapper"><?php echo __('Invoice #') ?> <?php echo $invoice["No."]; ?> </span>
+    </h1>
+    <span class="order-status"><?php echo $status ?></span>
+    <div class="order-date">
+        <span class="label"><?php echo __('Invoice Date:') ?></span> <date><?php echo date_format(date_create($invoice["Document Date"]), "d-m-Y") ?></date>
+    </div>
+</div>
+
+<div class="actions-toolbar order-actions-toolbar">
+    <div class="actions">
+        <a href="<?php echo $invoice["PDFUrl"] ?>" class="action order" target="_blank">
+            <span><?php echo __('Download PDF') ?></span>
+        </a>
+    </div>
+</div>
+
+<ul class="items order-links"><li class="nav item current"><strong><?php echo __('Items Invoiced') ?></strong></li></ul><div class="order-details-items ordered">
+
+    <div class="order-title">
+        <strong><?php echo __('Items Invoiced') ?></strong>
+    </div>
+
+    <div class="table-wrapper order-items">
+        <table class="data table table-order-items" id="my-orders-table">
+            <caption class="table-caption"><?php echo __('Items Invoiced') ?></caption>
+            <thead>
+            <tr>
+                <th class="col name"><?php echo __('Product Name') ?></th>
+                <th class="col sku"><?php echo __('SKU') ?></th>
+                <th class="col price"><?php echo __('Price') ?></th>
+                <th class="col qty"><?php echo __('Qty') ?></th>
+                <th class="col subtotal"><?php echo __('Subtotal') ?></th>
+            </tr>
+            </thead>
+
+            <?php
+            foreach ($invoiceLines as $invoiceLine) {
+                $itemNo = '';
+                if ((int)$invoiceLine["Type"] === 2) {
+                    $itemNo = $invoiceLine["No."];
+                }
+
+                if ($invoiceLine["Type"] < 1) {
+                    echo '<tbody>
+                            <tr id="order-item-row-1">
+                                <td class="col name" data-th="Product Name">
+                                    <strong class="product name product-item-name">' . $invoiceLine["Description"] . '</strong>
+                                </td>
+                                <td class="col sku" data-th="SKU"></td>
+                                <td class="col price" data-th="Price">
+                                </td>
+                                <td class="col qty" data-th="Qty">
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                </td>
+                            </tr>
+                        </tbody>';
+                } else {
+                    $qty = (float)$invoiceLine["Quantity"];
+                    if ($qty == 0) {
+                        $qty = 1;
+                    }
+
+                    echo '<tbody>
+                            <tr id="order-item-row-1">
+                                <td class="col name" data-th="Product Name">
+                                    <strong class="product name product-item-name">' . $invoiceLine["Description"] . '</strong>
+                                </td>
+                                <td class="col sku" data-th="SKU">' . $itemNo . '</td>
+                                <td class="col price" data-th="Price">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                        <span class="cart-price">
+                                            <span class="price">' . $invoice["Currency Code"] . ' ' . number_format((float)$invoiceLine["Amount"] / $qty, 2, ',', '.') . '</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="col qty" data-th="Qty">
+                                    <ul class="items-qty">
+                                        <li class="item">
+                                            <span class="content">' . $invoiceLine["Quantity"] . '</span>
+                                        </li>
+                                    </ul>
+                                </td>
+                                <td class="col subtotal" data-th="Subtotal">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                        <span class="cart-price">
+                                            <span class="price">' . $invoice["Currency Code"] . ' ' . number_format((float)$invoiceLine["Line Amount"], 2, ',', '.') . '</span>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>';
+                }
+            }
+            ?>
+
+            <tfoot>
+            <tr class="subtotal">
+                <th colspan="4" class="mark" scope="row">
+                    <?php echo __('Subtotal') ?>
+                </th>
+                <td class="amount" data-th="Subtotal">
+                    <span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount"], 2, ',', '.') ?></span>
+                </td>
+            </tr>
+            <tr class="shipping">
+                <th colspan="4" class="mark" scope="row">
+                    <?php echo __('VAT') ?>
+                </th>
+                <td class="amount" data-th="VAT &amp; VAT">
+                    <span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount Including VAT"] - (float)$invoice["Amount"], 2, ',', '.') ?></span>
+                </td>
+            </tr>
+            <tr class="grand_total">
+                <th colspan="4" class="mark" scope="row">
+                    <strong><?php echo __('Grand Total') ?></strong>
+                </th>
+                <td class="amount" data-th="Grand Total">
+                    <strong><span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount Including VAT"], 2, ',', '.') ?></span></strong>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+
+    <div class="actions-toolbar">
+        <div class="secondary">
+            <a class="action back" href="/invoices/invoicelist/">
+                <span><?php echo __('Back to My Invoices') ?></span>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="block block-order-details-view">
+    <div class="block-title">
+        <strong><?php echo __('Invoice Information') ?></strong>
+    </div>
+    <div class="block-content">
+        <div class="box box-order-shipping-address">
+            <strong class="box-title"><span><?php echo __('Shipping Address') ?></span></strong>
+            <div class="box-content">
+                <address><?php echo $invoice["Ship-to Name"]; ?><br/>
+                    <?php echo $invoice["Ship-to Address"]; ?><br />
+                    <?php echo $invoice["Ship-to City"]; ?>,  <?php echo $invoice["Ship-to Post Code"]; ?><br/>
+                    <?php echo $invoice["Ship-to Country/Region Code"]; ?><br/>
+                </address>
+            </div>
+        </div>
+        <div class="box box-order-shipping-method">
+            <strong class="box-title">
+                <span><?php echo __('Shipping Method') ?></span>
+            </strong>
+            <div class="box-content">
+                <div><?php echo $invoice["Shipment Method Code"]; ?></div>
+            </div>
+        </div>
+        <div class="box box-order-billing-address">
+            <strong class="box-title">
+                <span><?php echo __('Billing Address') ?></span>
+            </strong>
+            <div class="box-content">
+                <address><?php echo $invoice["Bill-to Name"]; ?><br/>
+                    <?php echo $invoice["Bill-to Address"]; ?><br />
+                    <?php echo $invoice["Bill-to City"]; ?>,  <?php echo $invoice["Bill-to Post Code"]; ?><br/>
+                    <?php echo $invoice["Bill-to Country/Region Code"]; ?><br/>
+                </address>
+            </div>
+        </div>
+        <div class="box box-order-billing-method">
+            <strong class="box-title">
+                <span><?php echo __('Payment Method') ?></span>
+            </strong>
+            <div class="box-content">
+                <dl class="payment-method checkmemo">
+                    <?php echo $invoice["Payment Method Code"]; ?>
+                    <?php echo $invoice["Payment Terms Code"]; ?>
+
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--
+
+Below is a list of all sales invoice header fields
+
+[No]
+[OrderNo]
+[SelltoCustomerNo]
+[BilltoCustomerNo]
+[BilltoName]
+[BilltoName2]
+[BilltoAddress]
+[BilltoAddress2]
+[BilltoCity]
+[BilltoContact]
+[YourReference]
+[ShiptoCode]
+[ShiptoName]
+[ShiptoName2]
+[ShiptoAddress]
+[ShiptoAddress2]
+[ShiptoCity]
+[ShiptoContact]
+[OrderDate]
+[PostingDate]
+[ShipmentDate]
+[PaymentTermsCode]
+[DueDate]
+[ShipmentMethodCode]
+[LocationCode]
+[ShortcutDimension1Code]
+[ShortcutDimension2Code]
+[LanguageCode]
+[SalespersonCode]
+[Amount]
+[AmountIncludingVAT]
+[CombineShipments]
+[VATCountryRegionCode]
+[SelltoCustomerName]
+[SelltoCustomerName2]
+[SelltoAddress]
+[SelltoAddress2]
+[SelltoCity]
+[SelltoContact]
+[BilltoPostCode]
+[BilltoCounty]
+[BilltoCountryRegionCode]
+[SelltoPostCode]
+[SelltoCounty]
+[SelltoCountryRegionCode]
+[ShiptoPostCode]
+[ShiptoCounty]
+[ShiptoCountryRegionCode]
+[DocumentDate]
+[ExternalDocumentNo]
+[PaymentMethodCode]
+[ShippingAgentCode]
+[PackageTrackingNo]
+[Status]
+[PrepaymentPercentage]
+[PrepaymentDueDate]
+[QuoteNo]
+[SelltoContactNo]
+[BilltoContactNo]
+[ShippedNotInvoiced]
+[CompletelyShipped]
+[Shipped]
+[RequestedDeliveryDate]
+[PromisedDeliveryDate]
+[ShippingAgentServiceCode]
+[NoOfLines]
+[PrepaymentInvoice]
+[PrepaymentOrderNo]
+[CanceledBy]
+[Canceled]
+[Paid]
+[RemainingAmount]
+[CustLedgerEntryNo]
+[WebOrder]
+[WebOrderId]
+[PdfFileName]
+[PdfUrl]
+[CurrencyCode]
+[Currency]
+[ShipmentMethod]
+[PaymentTerms]
+[PaymentMethod]
+
+-->
+
+<!--
+
+Below is a list of all sales invoice line fields
+
+[SelltoCustomerNo]
+[DocumentNo]
+[LineNo]
+[Type]
+[No]
+[NoIntegrationId]
+[LocationCode]
+[PostingGroup]
+[ShipmentDate]
+[Description]
+[Description2]
+[UnitofMeasure]
+[Quantity]
+[UnitPrice]
+[VATPercentage]
+[LineDiscountPercentage]
+[LineDiscountAmount]
+[Amount]
+[AmountIncludingVAT]
+[GrossWeight]
+[NetWeight]
+[UnitsperParcel]
+[UnitVolume]
+[ShortcutDimension1Code]
+[ShortcutDimension2Code]
+[CustomerPriceGroup]
+[ShipmentNo]
+[ShipmentLineNo]
+[BilltoCustomerNo]
+[InvDiscountAmount]
+[DropShipment]
+[ReservedQuantity]
+[VATBaseAmount]
+[LineAmount]
+[PrepaymentPercentage]
+[PostingDate]
+[VariantCode]
+[WebOrder]
+[WebOrderId]
+[IsShippingCostLine]
+[CurrencyCode]
+[Currency]
+[CrossReferenceNo]
+
+-->
