@@ -78,7 +78,7 @@ if (!empty($invoicesResponse)) {
             <tbody>
     </div>
     <?php foreach ($invoices as $invoice): ?>
-    <tr>
+    <tr class="even:bg-gray-100">
         <td data-th="Order #" class="col id"><?= $invoice["No."] ?></td>
         <td data-th="Date" class="col date"><?= date_format(date_create($invoice["Document Date"]), "d-m-Y") ?></td>
         <td data-th="Status #" class="col id"><?= $invoice["Order No."] ?></td>
