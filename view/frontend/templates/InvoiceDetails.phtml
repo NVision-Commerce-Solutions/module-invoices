@@ -1,27 +1,28 @@
 <?php
 /** @var \Commerce365\Invoices\Block\InvoiceDetails  $block */
 $invoice = $block->getInvoice();
-$invoiceLines = $invoice["Lines"];
+$invoiceLines = isset($invoice["Lines"]) && is_array($invoice["Lines"]) ? $invoice["Lines"] : [];
 $status = 'Paid';
-if ((float)$invoice["Remaining Amount"] > 0) {
-    $status = __('Unpaid') . ' (' . __('remaining') . ': &euro; ' . number_format((float)$invoice["Remaining Amount"], 2, ',', '.') . ')';
-}
+$remainingAmount = isset($invoice["Remaining Amount"]) ? (float)$invoice["Remaining Amount"] : 0;
 
+if ($remainingAmount > 0) {
+    $status = __('Unpaid') . ' (' . __('remaining') . ': &euro; ' . number_format($remainingAmount, 2, ',', '.') . ')';
+}
 ?>
 
 <div class="page-title-wrapper">
     <h1 class="page-title">
-        <span class="base" data-ui-id="page-title-wrapper"><?php echo __('Invoice #') ?> <?php echo $invoice["No."]; ?> </span>
+        <span class="base" data-ui-id="page-title-wrapper"><?php echo __('Invoice #') ?> <?php echo $block->safeGet($invoice, "No."); ?> </span>
     </h1>
     <span class="order-status"><?php echo $status ?></span>
     <div class="order-date">
-        <span class="label"><?php echo __('Invoice Date:') ?></span> <date><?php echo date_format(date_create($invoice["Document Date"]), "d-m-Y") ?></date>
+        <span class="label"><?php echo __('Invoice Date:') ?></span> <date><?php echo date_format(date_create($block->safeGet($invoice, "Document Date")), "d-m-Y") ?></date>
     </div>
 </div>
 
 <div class="actions-toolbar order-actions-toolbar">
     <div class="actions">
-        <a href="<?php echo $invoice["PDFUrl"] ?>" class="action order" target="_blank">
+        <a href="<?php echo $block->safeGet($invoice, "PDFUrl") ?>" class="action order" target="_blank">
             <span><?php echo __('Download PDF') ?></span>
         </a>
     </div>
@@ -49,15 +50,15 @@ if ((float)$invoice["Remaining Amount"] > 0) {
             <?php
             foreach ($invoiceLines as $invoiceLine) {
                 $itemNo = '';
-                if ((int)$invoiceLine["Type"] === 2) {
-                    $itemNo = $invoiceLine["No."];
+                if ((int)$block->safeGet($invoiceLine, "Type") === 2) {
+                    $itemNo = $block->safeGet($invoiceLine, "No.");
                 }
 
-                if ($invoiceLine["Type"] < 1) {
+                if ($block->safeGet($invoiceLine, "Type") < 1) {
                     echo '<tbody>
                             <tr id="order-item-row-1">
                                 <td class="col name" data-th="Product Name">
-                                    <strong class="product name product-item-name">' . $invoiceLine["Description"] . '</strong>
+                                    <strong class="product name product-item-name">' . $block->safeGet($invoiceLine, "Description") . '</strong>
                                 </td>
                                 <td class="col sku" data-th="SKU"></td>
                                 <td class="col price" data-th="Price">
@@ -69,7 +70,7 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                             </tr>
                         </tbody>';
                 } else {
-                    $qty = (float)$invoiceLine["Quantity"];
+                    $qty = (float)$block->safeGet($invoiceLine, "Quantity");
                     if ($qty == 0) {
                         $qty = 1;
                     }
@@ -77,27 +78,27 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                     echo '<tbody>
                             <tr id="order-item-row-1">
                                 <td class="col name" data-th="Product Name">
-                                    <strong class="product name product-item-name">' . $invoiceLine["Description"] . '</strong>
+                                    <strong class="product name product-item-name">' . $block->safeGet($invoiceLine, "Description") . '</strong>
                                 </td>
                                 <td class="col sku" data-th="SKU">' . $itemNo . '</td>
                                 <td class="col price" data-th="Price">
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                         <span class="cart-price">
-                                            <span class="price">' . $invoice["Currency Code"] . ' ' . number_format((float)$invoiceLine["Amount"] / $qty, 2, ',', '.') . '</span>
+                                            <span class="price">' . $block->safeGet($invoice, "Currency Code") . ' ' . number_format((float)$block->safeGet($invoiceLine, "Amount") / $qty, 2, ',', '.') . '</span>
                                         </span>
                                     </span>
                                 </td>
                                 <td class="col qty" data-th="Qty">
                                     <ul class="items-qty">
                                         <li class="item">
-                                            <span class="content">' . $invoiceLine["Quantity"] . '</span>
+                                            <span class="content">' . $block->safeGet($invoiceLine, "Quantity") . '</span>
                                         </li>
                                     </ul>
                                 </td>
                                 <td class="col subtotal" data-th="Subtotal">
                                     <span class="price-excluding-tax" data-label="Excl. Tax">
                                         <span class="cart-price">
-                                            <span class="price">' . $invoice["Currency Code"] . ' ' . number_format((float)$invoiceLine["Line Amount"], 2, ',', '.') . '</span>
+                                            <span class="price">' . $block->safeGet($invoice, "Currency Code") . ' ' . number_format((float)$block->safeGet($invoiceLine, "Line Amount"), 2, ',', '.') . '</span>
                                         </span>
                                     </span>
                                 </td>
@@ -113,7 +114,7 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                     <?php echo __('Subtotal') ?>
                 </th>
                 <td class="amount" data-th="Subtotal">
-                    <span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount"], 2, ',', '.') ?></span>
+                    <span class="price"><?php echo $block->safeGet($invoice, "Currency Code"); ?> <?php echo number_format((float)$block->safeGet($invoice, "Amount"), 2, ',', '.') ?></span>
                 </td>
             </tr>
             <tr class="shipping">
@@ -121,7 +122,7 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                     <?php echo __('VAT') ?>
                 </th>
                 <td class="amount" data-th="VAT &amp; VAT">
-                    <span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount Including VAT"] - (float)$invoice["Amount"], 2, ',', '.') ?></span>
+                    <span class="price"><?php echo $block->safeGet($invoice, "Currency Code"); ?> <?php echo number_format((float)$block->safeGet($invoice, "Amount Including VAT") - (float)$block->safeGet($invoice, "Amount"), 2, ',', '.') ?></span>
                 </td>
             </tr>
             <tr class="grand_total">
@@ -129,7 +130,7 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                     <strong><?php echo __('Grand Total') ?></strong>
                 </th>
                 <td class="amount" data-th="Grand Total">
-                    <strong><span class="price"><?php echo $invoice["Currency Code"]; ?> <?php echo number_format((float)$invoice["Amount Including VAT"], 2, ',', '.') ?></span></strong>
+                    <strong><span class="price"><?php echo $block->safeGet($invoice, "Currency Code"); ?> <?php echo number_format((float)$block->safeGet($invoice, "Amount Including VAT"), 2, ',', '.') ?></span></strong>
                 </td>
             </tr>
             </tfoot>
@@ -153,10 +154,10 @@ if ((float)$invoice["Remaining Amount"] > 0) {
         <div class="box box-order-shipping-address">
             <strong class="box-title"><span><?php echo __('Shipping Address') ?></span></strong>
             <div class="box-content">
-                <address><?php echo $invoice["Ship-to Name"]; ?><br/>
-                    <?php echo $invoice["Ship-to Address"]; ?><br />
-                    <?php echo $invoice["Ship-to City"]; ?>,  <?php echo $invoice["Ship-to Post Code"]; ?><br/>
-                    <?php echo $invoice["Ship-to Country/Region Code"]; ?><br/>
+                <address><?php echo $block->safeGet($invoice, "Ship-to Name"); ?><br/>
+                    <?php echo $block->safeGet($invoice, "Ship-to Address"); ?><br />
+                    <?php echo $block->safeGet($invoice, "Ship-to City"); ?>,  <?php echo $block->safeGet($invoice, "Ship-to Post Code"); ?><br/>
+                    <?php echo $block->safeGet($invoice, "Ship-to Country/Region Code"); ?><br/>
                 </address>
             </div>
         </div>
@@ -165,7 +166,7 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                 <span><?php echo __('Shipping Method') ?></span>
             </strong>
             <div class="box-content">
-                <div><?php echo $invoice["Shipment Method Code"]; ?></div>
+                <div><?php echo $block->safeGet($invoice, "Shipment Method Code"); ?></div>
             </div>
         </div>
         <div class="box box-order-billing-address">
@@ -173,10 +174,10 @@ if ((float)$invoice["Remaining Amount"] > 0) {
                 <span><?php echo __('Billing Address') ?></span>
             </strong>
             <div class="box-content">
-                <address><?php echo $invoice["Bill-to Name"]; ?><br/>
-                    <?php echo $invoice["Bill-to Address"]; ?><br />
-                    <?php echo $invoice["Bill-to City"]; ?>,  <?php echo $invoice["Bill-to Post Code"]; ?><br/>
-                    <?php echo $invoice["Bill-to Country/Region Code"]; ?><br/>
+                <address><?php echo $block->safeGet($invoice, "Bill-to Name"); ?><br/>
+                    <?php echo $block->safeGet($invoice, "Bill-to Address"); ?><br />
+                    <?php echo $block->safeGet($invoice, "Bill-to City"); ?>,  <?php echo $block->safeGet($invoice, "Bill-to Post Code"); ?><br/>
+                    <?php echo $block->safeGet($invoice, "Bill-to Country/Region Code"); ?><br/>
                 </address>
             </div>
         </div>
@@ -186,9 +187,8 @@ if ((float)$invoice["Remaining Amount"] > 0) {
             </strong>
             <div class="box-content">
                 <dl class="payment-method checkmemo">
-                    <?php echo $invoice["Payment Method Code"]; ?>
-                    <?php echo $invoice["Payment Terms Code"]; ?>
-
+                    <?php echo $block->safeGet($invoice, "Payment Method Code"); ?>
+                    <?php echo $block->safeGet($invoice, "Payment Terms Code"); ?>
                 </dl>
             </div>
         </div>
