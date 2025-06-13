@@ -10,9 +10,9 @@ $invoice = $block->getInvoice();
 $invoiceLines = $block->safeGet($invoice, "Lines", []);
 $status = 'Paid';
 
-if ((float)$block->safeGet($invoice, "Remaining Amount", 0) > 0) {
-    $status = __('Unpaid') . ' (' . __('remaining') . ': &euro; ' . number_format((float)
-        $block->safeGet($invoice, "Remaining Amount", 0), 2, ',', '.') . ')';
+$remainingAmount = (float)$block->safeGet($invoice, "Remaining Amount", 0);
+if ($remainingAmount > 0) {
+    $status = __('Unpaid') . ' (' . __('remaining') . ': &euro; ' . number_format($remainingAmount, 2, ',', '.') . ')';
 }
 ?>
 

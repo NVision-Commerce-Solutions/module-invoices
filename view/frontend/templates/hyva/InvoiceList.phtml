@@ -39,7 +39,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'No.')): ?>
                     <th scope="col" class="col id p-2 text-left">
                         <a href="<?= $block->getSortLink('No.')?>">
-                            <?php echo __('Invoice #') ?>
+                            <?= __('Invoice #') ?>
                             <?= $block->getSortIcon('No.') ?>
                         </a>
                     </th>
@@ -47,7 +47,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'Document Date')): ?>
                     <th scope="col" class="col date p-2 text-left">
                         <a href="<?= $block->getSortLink('Document Date')?>">
-                            <?php echo __('Date') ?>
+                            <?= __('Date') ?>
                             <?= $block->getSortIcon('Document Date') ?>
                         </a>
                     </th>
@@ -55,7 +55,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'Order No.')): ?>
                         <th scope="col" class="col status p-2 text-left">
                             <a href="<?= $block->getSortLink('Order No.')?>">
-                                <?php echo __('From Order #') ?>
+                                <?= __('From Order #') ?>
                                 <?= $block->getSortIcon('Order No.') ?>
                             </a>
                         </th>
@@ -63,7 +63,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'Ship-to Name')): ?>
                     <th scope="col" class="col shipping p-2 text-left">
                         <a href="<?= $block->getSortLink('Ship-to Name')?>">
-                            <?php echo __('Bill To') ?>
+                            <?= __('Bill To') ?>
                             <?= $block->getSortIcon('Ship-to Name') ?>
                         </a>
                     </th>
@@ -71,7 +71,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'Amount Including VAT')): ?>
                     <th scope="col" class="col total p-2 text-left">
                         <a href="<?= $block->getSortLink('Amount Including VAT')?>">
-                            <?php echo __('Invoice Total') ?>
+                            <?= __('Invoice Total') ?>
                             <?= $block->getSortIcon('Amount Including VAT') ?>
                         </a>
                     </th>
@@ -79,7 +79,7 @@ if (!empty($invoicesResponse)) {
                     <?php if($this->isColumnExists($invoices, 'Remaining Amount')): ?>
                     <th scope="col" class="col total p-2 text-left">
                         <a href="<?= $block->getSortLink('Remaining Amount')?>">
-                            <?php echo __('Open Amount') ?>
+                            <?= __('Open Amount') ?>
                             <?= $block->getSortIcon('Remaining Amount') ?>
                         </a>
                     </th>
@@ -140,13 +140,13 @@ if (!empty($invoicesResponse)) {
     </div>
     <div class="flex flex-wrap justify-between items-center gap-2">
         <?php if ($block->getPage() > 1): ?>
-        <a href="<?= $block->getPreviousPageUrl($block->getPage()) ?>" class="btn btn-secondary""><?= $escaper->escapeHtml(__('Previous')) ?></a>
+        <a href="<?= $block->getPreviousPageUrl() ?>" class="btn btn-secondary""><?= $escaper->escapeHtml(__('Previous')) ?></a>
             <?php endif; ?>
             <?php if ($block->getPage() > 1 && $block->getPage() < $invoicesResponse["totalPages"]): ?>
                 -
             <?php endif; ?>
             <?php if ($block->getPage() < $invoicesResponse["totalPages"]): ?>
-            <a href=" <?= $block->getNextPageUrl($block->getPage()) ?>"
+            <a href="<?= $block->getNextPageUrl() ?>"
             class="btn btn-secondary"><?= $escaper->escapeHtml(__('Next')) ?></a>
         <?php endif; ?>
     </div>
