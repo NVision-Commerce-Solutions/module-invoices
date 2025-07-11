@@ -69,7 +69,7 @@ if (!empty($invoicesResponse)) {
                     </th>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Amount Including VAT')): ?>
-                    <th scope="col" class="col total p-2 text-left">
+                    <th scope="col" class="col total p-2 text-right">
                         <a href="<?= $block->getSortLink('Amount Including VAT')?>">
                             <?= __('Invoice Total') ?>
                             <?= $block->getSortIcon('Amount Including VAT') ?>
@@ -77,7 +77,7 @@ if (!empty($invoicesResponse)) {
                     </th>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Remaining Amount')): ?>
-                    <th scope="col" class="col total p-2 text-left">
+                    <th scope="col" class="col total p-2 text-right">
                         <a href="<?= $block->getSortLink('Remaining Amount')?>">
                             <?= __('Open Amount') ?>
                             <?= $block->getSortIcon('Remaining Amount') ?>
@@ -91,26 +91,26 @@ if (!empty($invoicesResponse)) {
                 <?php foreach ($invoices as $invoice): ?>
                 <tr class="even:bg-gray-100">
                     <?php if($this->isColumnExists($invoices, 'No.')): ?>
-                        <td data-th="Order #" class="col id"><?= $invoice["No."] ?></td>
+                        <td data-th="Order #" class="col p-2 id"><?= $invoice["No."] ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Document Date')): ?>
-                        <td data-th="Date" class="col date"><?= date_format(date_create($invoice["Document Date"]), "d-m-Y") ?></td>
+                        <td data-th="Date" class="col p-2 date"><?= date_format(date_create($invoice["Document Date"]), "d-m-Y") ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Order No.')): ?>
-                        <td data-th="Status #" class="col id"><?= $invoice["Order No."] ?></td>
+                        <td data-th="Status #" class="col p-2 id"><?= $invoice["Order No."] ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Ship-to Name')): ?>
-                    <td data-th="Ship To #" class="col id"><?= $invoice["Ship-to Name"] ?></td>
+                    <td data-th="Ship To #" class="col p-2 id"><?= $invoice["Ship-to Name"] ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Amount Including VAT')): ?>
-                    <td data-th="Total" class="col total"><?= $invoice["Currency Code"] ?>
+                    <td data-th="Total" class="col p-2 total text-right"><?= $invoice["Currency Code"] ?>
                         <?= number_format((float)$invoice["Amount Including VAT"], 2, ',', '.') ?></td>
                     <?php endif; ?>
                     <?php if($this->isColumnExists($invoices, 'Remaining Amount')): ?>
-                    <td data-th="Total" class="col total p-2"><?= $invoice["Currency Code"] ?>
+                    <td data-th="Total" class="col total p-2 text-right"><?= $invoice["Currency Code"] ?>
                         <?= number_format((float)$invoice["Remaining Amount"], 2, ',', '.') ?></td>
                     <?php endif; ?>
-                    <td data-th="Actions" class="col actions">
+                    <td data-th="Actions" class="col actions text-right p-2">
                         <a href="<?= $block->getViewUrl($invoice["id"]) ?>" class="action view">
                             <span><?=__("View Invoice") ?></span>
                         </a>
